@@ -55,7 +55,10 @@ fun ErrorDialogContent(
 ) {
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer
+        ),
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 15.dp
         )
     ) {
         Column(
@@ -65,13 +68,15 @@ fun ErrorDialogContent(
         ) {
             Text(
                 text = stringResource(id = R.string.attention),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = body,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.height(12.dp))
             Button(onClick = onAction) {

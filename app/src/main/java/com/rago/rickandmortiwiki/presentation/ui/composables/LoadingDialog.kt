@@ -37,7 +37,9 @@ fun LoadingDialog(
 private fun LoadingDialogContent() {
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer
+        ), elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 15.dp
         )
     ) {
 
@@ -49,7 +51,8 @@ private fun LoadingDialogContent() {
         ) {
             Text(
                 text = stringResource(id = R.string.loading),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.width(16.dp))
             CircularProgressIndicator()

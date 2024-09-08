@@ -1,5 +1,6 @@
 package com.rago.rickandmortiwiki.presentation.screen
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -119,15 +120,16 @@ private fun CharactersScreenEmptyData(charactersUIState: CharactersUIState = Cha
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.tertiary),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Filled.Inbox, contentDescription = null, modifier = Modifier.size(64.dp))
+            Icon(Icons.Filled.Inbox, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.secondary)
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = stringResource(id = R.string.not_data),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = { charactersUIState.getCharacters() }) {
@@ -143,24 +145,11 @@ private fun CharactersScreenEmptyData(charactersUIState: CharactersUIState = Cha
 private fun ItemCharacter(
     result: Result = seedResult
 ) {
-
-    // se selecciona un color usando el status del personaje, "vivo" = "verde", "muerto" = "rojo" y "desconocido" = "gris"
-    val statusColor = when (result.status?.lowercase() ?: "") {
-        "alive" -> {
-            Color.Green
-        }
-
-        "dead" -> {
-            Color.Red
-        }
-
-        else -> Color.Gray
-    }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 6.dp), colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer
         ),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 10.dp
@@ -188,36 +177,76 @@ private fun ItemCharacter(
             Column(
                 modifier = Modifier.padding(start = 10.dp)
             ) {
-                Text(text = result.name ?: "", style = MaterialTheme.typography.titleSmall)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(statusColor)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = result.status ?: "")
-                    Text(text = " - ")
-                    Text(text = result.species ?: "")
-                }
-
-                Text(
-                    modifier = Modifier.padding(top = 6.dp),
-                    text = stringResource(id = R.string.last_known_location),
-                    style = MaterialTheme.typography.labelMedium, color = Color.Gray
+                TitleText(result.name ?: "")
+                RowStatusAndSpecies(
+                    status = result.status?.lowercase() ?: "",
+                    species = result.species ?: ""
                 )
-                Text(
-                    text = result.location?.name ?: "",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    modifier = Modifier.padding(top = 6.dp),
-                    text = stringResource(id = R.string.first_seen_in),
-                    style = MaterialTheme.typography.labelMedium, color = Color.Gray
-                )
-                Text(text = result.origin?.name ?: "", style = MaterialTheme.typography.bodyMedium)
+                LabelText(res = R.string.last_known_location)
+                BodyText(body = result.location?.name ?: "")
+                LabelText(res = R.string.first_seen_in)
+                BodyText(body = result.origin?.name ?: "")
             }
         }
     }
+}
+
+@Composable
+private fun TitleText(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+private fun LabelText(@StringRes res: Int) {
+    Text(
+        modifier = Modifier.padding(top = 6.dp),
+        text = stringResource(id = res),
+        style = MaterialTheme.typography.labelMedium, color = Color.White
+    )
+}
+
+@Composable
+private fun BodyText(body: String) {
+    Text(
+        text = body,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.secondary
+    )
+}
+
+@Composable
+private fun RowStatusAndSpecies(status: String, species: String) {
+    // se selecciona un color usando el status del personaje, "vivo" = "verde", "muerto" = "rojo" y "desconocido" = "gris"
+    val statusColor = when (status) {
+        "alive" -> {
+            Color.Green
+        }
+
+        "dead" -> {
+            Color.Red
+        }
+
+        else -> Color.Gray
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .clip(CircleShape)
+                .background(statusColor)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        NormalText(text = status)
+        NormalText(text = " - ")
+        NormalText(text = species)
+    }
+}
+
+@Composable
+private fun NormalText(text:String){
+    Text(text = text, color = MaterialTheme.colorScheme.secondary)
 }
