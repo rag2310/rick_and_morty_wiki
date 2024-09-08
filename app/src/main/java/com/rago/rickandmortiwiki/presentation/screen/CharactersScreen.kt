@@ -1,7 +1,6 @@
 package com.rago.rickandmortiwiki.presentation.screen
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Inbox
@@ -41,8 +41,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rago.rickandmortiwiki.R
-import com.rago.rickandmortiwiki.data.model.Location
-import com.rago.rickandmortiwiki.data.model.Origin
 import com.rago.rickandmortiwiki.data.model.Result
 import com.rago.rickandmortiwiki.data.model.seedResult
 import com.rago.rickandmortiwiki.presentation.ui.composables.ErrorDialog
@@ -52,36 +50,53 @@ import com.rago.rickandmortiwiki.presentation.uistate.CharactersUIState
 @Composable
 fun CharactersScreen(charactersUIState: CharactersUIState) {
 
+    //Dialogo de carga
     LoadingDialog(showDialog = charactersUIState.loading)
 
+    // Dialogo de error que usa los recursos del sistema para mensajes generales.
     ErrorDialog(errorRes = charactersUIState.errorRes) {
         charactersUIState.onClearError()
     }
 
+    // Dialogo de error que usa mensaje directo del servidor(Si lo hay).
     ErrorDialog(errorMsg = charactersUIState.error) {
         charactersUIState.onClearError()
     }
 
+    //Al iniciar la pantalla obtienen la primera pagina de los personajes.
     LaunchedEffect(key1 = Unit) {
         charactersUIState.getCharacters()
     }
+
     CharactersScreenContent(charactersUIState)
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun CharactersScreenContent(charactersUIState: CharactersUIState = CharactersUIState(
-    characters = listOf(seedResult)
-)) {
+private fun CharactersScreenContent(
+    charactersUIState: CharactersUIState = CharactersUIState(
+        characters = listOf(seedResult)
+    )
+) {
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(charactersUIState.currentIndex) {
+        val currentIndex = charactersUIState.currentIndex
+        if (currentIndex > 0) {
+            listState.scrollToItem(currentIndex)
+        }
+    }
+    // Maneja animacion de cuando se cambio el valor de la lista de characters.
     Crossfade(targetState = charactersUIState.characters, label = "list_characters") {
         if (it.isEmpty()) {
-            CharactersScreenEmptyData()
+            CharactersScreenEmptyData(charactersUIState)
         } else {
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxSize(), state = listState) {
                 items(charactersUIState.characters) { result ->
                     ItemCharacter(result)
                 }
-                if (charactersUIState.characters.isNotEmpty()) {
+                if (charactersUIState.characters.isNotEmpty() && (charactersUIState.currentPage <= charactersUIState.totalPage)) {
                     item {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                             Button(
@@ -97,9 +112,10 @@ private fun CharactersScreenContent(charactersUIState: CharactersUIState = Chara
     }
 }
 
+// Pantalla de que no se logro obtener datos.
 @Preview(showBackground = true)
 @Composable
-private fun CharactersScreenEmptyData() {
+private fun CharactersScreenEmptyData(charactersUIState: CharactersUIState = CharactersUIState()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -113,16 +129,22 @@ private fun CharactersScreenEmptyData() {
                 text = stringResource(id = R.string.not_data),
                 style = MaterialTheme.typography.titleMedium
             )
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(onClick = { charactersUIState.getCharacters() }) {
+                Text(text = stringResource(id = R.string.again))
+            }
         }
     }
 }
 
+// Card que maneja los datos de los personajes
 @Preview(showBackground = true)
 @Composable
 private fun ItemCharacter(
     result: Result = seedResult
 ) {
 
+    // se selecciona un color usando el status del personaje, "vivo" = "verde", "muerto" = "rojo" y "desconocido" = "gris"
     val statusColor = when (result.status?.lowercase() ?: "") {
         "alive" -> {
             Color.Green
@@ -147,7 +169,10 @@ private fun ItemCharacter(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Max)) {
+                .height(IntrinsicSize.Max)
+        ) {
+
+            // Se carga la imagen del personaje usando la libreria de Coil.
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(result.image ?: "")

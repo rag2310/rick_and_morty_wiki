@@ -11,7 +11,10 @@ import retrofit2.Callback
 import retrofit2.Response
 
 const val ERROR_INTERNET = "Unable to resolve host"
+const val ERROR_TIMEOUT = "timeout"
 
+
+// Maneja la peticion de retrofit por callbackflow.
 fun <T> retrofitArrow(api: Call<T>): Flow<Either<ErrorResponse, SuccessResponse<T>>> =
     callbackFlow {
         val callback: Callback<T> = object : Callback<T> {
@@ -54,9 +57,11 @@ fun <T> retrofitArrow(api: Call<T>): Flow<Either<ErrorResponse, SuccessResponse<
             }
 
             override fun onFailure(call: Call<T>, t: Throwable) {
-                val result = t.message?.contains(ERROR_INTERNET) ?: false
+                val result = t.message?.contains(ERROR_INTERNET) ?: false || t.message?.contains(
+                    ERROR_TIMEOUT
+                ) ?: false
 
-                if (result){
+                if (result) {
                     trySend(
                         Either.Left(
                             ErrorResponse(

@@ -28,6 +28,7 @@ class CharactersViewModel @Inject constructor(
     )
     val uiState: StateFlow<CharactersUIState> = _uiState.asStateFlow()
 
+    // Limpia el los recursos del error para no mostrar el dialogo.
     private fun onClearError() {
         viewModelScope.launch {
             _uiState.update {
@@ -54,7 +55,9 @@ class CharactersViewModel @Inject constructor(
                     }
                 }, { success: SuccessResponse<CharactersResponse> ->
                     val data = success.data
+                    val totalPage = data?.info?.pages ?: 0
                     val currentCharacters = _uiState.value.characters.toMutableList()
+                    val currentIndex = currentCharacters.size
                     if (data != null) {
                         val result = data.results ?: listOf()
                         currentCharacters.addAll(result)
@@ -62,7 +65,9 @@ class CharactersViewModel @Inject constructor(
                             it.copy(
                                 loading = false,
                                 characters = currentCharacters,
-                                currentPage = currentPage + 1
+                                currentPage = currentPage + 1,
+                                currentIndex = currentIndex,
+                                totalPage = totalPage
                             )
                         }
                     } else {

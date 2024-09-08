@@ -12,6 +12,8 @@ import javax.inject.Inject
 class CharactersRepositoryImpl @Inject constructor(
     private val charactersApiService: CharactersApiService
 ) : CharactersRepository {
+
+    // Se obtienen personajes del servidor
     override fun getCharacters(page: Int): Flow<Either<ErrorResponse, SuccessResponse<CharactersResponse>>> {
         return retrofitArrow(
             charactersApiService.getCharacters(page)

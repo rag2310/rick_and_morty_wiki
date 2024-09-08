@@ -9,4 +9,5 @@
     <string name="description">Personaje</string>
     <string name="last_known_location">Última ubicación conocida:</string>
     <string name="first_seen_in">Visto por primera vez en:</string>
+    <string name="again">Reintentar</string>
 </resources>

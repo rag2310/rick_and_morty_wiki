@@ -9,7 +9,9 @@ data class CharactersUIState(
     val characters: List<Result> = listOf(),
     val getCharacters: () -> Unit = {},
     val currentPage: Int = 1,
+    val totalPage: Int = 0,
     val error: String = "",
     @StringRes val errorRes: Int = -1,
-    val onClearError: () -> Unit = {}
+    val onClearError: () -> Unit = {},
+    val currentIndex: Int = 0,
 )

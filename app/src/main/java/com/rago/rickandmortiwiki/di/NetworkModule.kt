@@ -15,6 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+
+//Modulo para el manejo del retrofit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -27,9 +29,9 @@ object NetworkModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(logInterceptor)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
             .build()
     }
 

@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 
+//Modulo de casos de uso.
 @Module
 @InstallIn(ViewModelComponent::class)
 object UseCaseModule {
