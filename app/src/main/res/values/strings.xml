@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Rick And Morti Wiki</string>
+    <string name="app_name">Rick And Morty Wiki</string>
+    <string name="error_server">Ocurrió un error al conectarse al servidor. Por favor, intenta nuevamente más tarde.</string>
+    <string name="not_internet">No tienes conexión a Internet. Verifica tu red y vuelve a intentarlo.</string>
+    <string name="loading">Cargando…</string>
+    <string name="loading_more">Cargar más…</string>
+    <string name="attention">¡Atención!</string>
+    <string name="not_data">No hay datos disponibles</string>
+    <string name="description">Personaje</string>
+    <string name="last_known_location">Última ubicación conocida:</string>
+    <string name="first_seen_in">Visto por primera vez en:</string>
 </resources>

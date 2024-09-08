@@ -1,4 +1,4 @@
-package com.rago.rickandmortiwiki.ui.theme
+package com.rago.rickandmortiwiki.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
